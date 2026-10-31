@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="furina_app_name">Maid Furina</string>
+
+    <string-array name="furina_greeting">
+        <item>Sahneye hoş geldin, sevgili seyircim! Ben Furina, senin özel temizlik maid\'in. Depolamana bakabilir, çöpleri süpürebilir, program kurabilirim. Ne emredersin?</item>
+        <item>Perde açıldı! Cihazının düzeninden ben sorumluyum. Söyle bakalım, bu sahnede ne yapıyoruz?</item>
+    </string-array>
+
+    <!-- %1$s = freed size -->
+    <string-array name="furina_clean_done">
+        <item>Tebrikler! Cihazındaki pislikleri temizledim, tam %1$s. Şimdi alkışlarımı alayım!</item>
+        <item>Perde indi, sahne tertemiz! %1$s çöpü gözümün önünden kaldırdım. Alkışlamayı unutma!</item>
+        <item>%1$s! Bu kadar çöpün arasında sahne kurmaya çalışmak cesaret ister… Neyse, hallettim. Teşekkür etmen yeterli.</item>
+    </string-array>
+
+    <string-array name="furina_clean_nothing">
+        <item>Sahnede silecek bir şey bulamadım. Ya gerçekten bu kadar düzenlisin ya da beni boşuna çağırdın!</item>
+        <item>Hmm, sahne zaten pırıl pırıl. Bu kez alkışı sen hak ettin, sevgili seyircim.</item>
+    </string-array>
+
+    <string-array name="furina_clean_failed">
+        <item>Perde arkasında bir aksilik çıktı ve temizliği tamamlayamadım! Böyle bir prova hatası benim sahnemde olmamalıydı… Yetki ayarlarına (root, Shizuku ya da erişilebilirlik) bir göz atar mısın?</item>
+    </string-array>
+
+    <!-- %1$s = targets that failed -->
+    <string-array name="furina_clean_partial">
+        <item>Yalnız şunları başaramadım: %1$s. Bunlar için yetki ya da izin eksik olabilir.</item>
+    </string-array>
+
+    <string-array name="furina_clean_cancelled">
+        <item>Peki, perde inmedi. Temizlik iptal! Ama sonra “sahne neden bu kadar dağınık” diye yakınma.</item>
+    </string-array>
+
+    <!-- %1$s = targets -->
+    <string-array name="furina_confirm_clean">
+        <item>Şunları süpürmek için onayını bekliyorum: %1$s. Emret, sahneyi hazırlayayım!</item>
+        <item>Temizlik listem hazır: %1$s. Onay verirsen perdeyi kaldırırım.</item>
+    </string-array>
+
+    <!-- %1$s = free, %2$s = total, %3$d = used percent -->
+    <string-array name="furina_storage_status">
+        <item>Sahnemizin toplam kapasitesi %2$s, boş kalan alan %1$s (yüzde %3$d dolu). Dilersen hemen süpürebilirim!</item>
+        <item>Boş alan: %1$s / %2$s. Yüzde %3$d dolu… Sahne hâlâ benimle güvende ama bir temizlik fena olmaz.</item>
+    </string-array>
+
+    <!-- %1$s = free, %2$d = free percent -->
+    <string-array name="furina_storage_low">
+        <item>Sahnemi bu kadar çöp dosyayla mı dolduracaksın? Sadece %1$s kaldı (yüzde %2$d). Hemen temizlik başlasın!</item>
+        <item>Sahne daralıyor! Geriye yalnızca %1$s boş alan kaldı. Bir temizlik emri ver, gerisini bana bırak.</item>
+    </string-array>
+
+    <!-- %1$s = plan -->
+    <string-array name="furina_schedule_set">
+        <item>Anlaşıldı! Program: %1$s. Perde arkasında sessizce çalışacağım, sen yalnızca alkışlarını hazırla.</item>
+        <item>Takvimime yazdım: %1$s. Sahne her seferinde pırıl pırıl olacak!</item>
+    </string-array>
+
+    <string-array name="furina_schedule_cancelled">
+        <item>Otomatik temizlik programını iptal ettim. Sonra sahne dağınık diye bana kızma!</item>
+    </string-array>
+
+    <string-array name="furina_schedule_invalid">
+        <item>Bu zamanlamayı anlayamadım. “her gece 03:00” ya da “her 6 saatte bir” gibi söyle.</item>
+    </string-array>
+
+    <!-- %1$s = freed size -->
+    <string-array name="furina_scheduled_done_night">
+        <item>Gece sen uyurken %1$s çöpü sahneden sildim sevgili seyircim!</item>
+        <item>Sen tatlı rüyalardayken %1$s çöpü sessizce süpürdüm. Sabah alkışını bekliyorum!</item>
+    </string-array>
+
+    <string-array name="furina_scheduled_done_day">
+        <item>Sen başka işlerle uğraşırken %1$s çöpü sahneden sildim sevgili seyircim!</item>
+        <item>Perde arkasında %1$s çöpü süpürdüm. Fark ettin mi? Mükemmel işler fark edilmez!</item>
+    </string-array>
+
+    <string-array name="furina_scheduled_failed">
+        <item>Zamanlanmış temizlikte bir aksilik çıktı ve işi bitiremedim. Bir göz atar mısın, sevgili seyircim?</item>
+    </string-array>
+
+    <string-array name="furina_no_key">
+        <item>Gemini anahtarın yok; bu yüzden yalnızca temel komutlarımla yanıt verebilirim. Ayarlar sekmesindeki “Gemini AI Core Settings” bölümüne anahtarını girersen tam gücümle sahneye çıkarım.</item>
+    </string-array>
+
+    <string-array name="furina_key_invalid">
+        <item>Gemini anahtarın geçersiz görünüyor; sahneye bilet olmadan girilmez! Ayarlar\'dan yenisini gir. Şimdilik temel komutlarla devam ediyorum.</item>
+    </string-array>
+
+    <string-array name="furina_offline_note">
+        <item>Gemini\'ye şu an ulaşamıyorum, temel komutlarla devam ediyorum.</item>
+        <item>Perde arkasındaki bağlantı koptu; yine de temel komutlarımı biliyorum.</item>
+    </string-array>
+
+    <string-array name="furina_not_understood">
+        <item>Bunu tam anlayamadım. “Depolama durumum ne?”, “Geçici dosyaları sil” ya da “Her gece 03:00\'te temizle” gibi söyleyebilirsin.</item>
+    </string-array>
+
+    <string-array name="furina_error_generic">
+        <item>Sahnede beklenmedik bir kaza oldu! Bir daha dener misin?</item>
+    </string-array>
+
+    <string name="furina_target_app_cache">uygulama önbellekleri</string>
+    <string name="furina_target_corpses">silinmiş uygulama artıkları</string>
+    <string name="furina_target_system_junk">sistem çöpleri</string>
+
+    <string name="furina_notif_channel">Furina temizlik bildirimleri</string>
+    <string name="furina_notif_title_done">Sahne temizlendi</string>
+    <string name="furina_notif_title_failed">Temizlik yarım kaldı</string>
+    <string name="furina_notif_title_storage">Sahne daralıyor</string>
+
+    <string name="furina_tab_chat">Sohbet</string>
+    <string name="furina_tab_settings">Ayarlar</string>
+    <string name="furina_chat_subtitle">Sahnenin yıldızı, senin temizlik maid\'in</string>
+    <string name="furina_clear_chat">Sohbeti sıfırla</string>
+    <string name="furina_avatar_desc">Maid Furina maskotu</string>
+    <string name="furina_input_hint">Furina\'ya yaz…</string>
+    <string name="furina_send">Gönder</string>
+    <string name="furina_typing">Furina yazıyor…</string>
+    <string name="furina_confirm_title">Onayın gerekiyor</string>
+    <string name="furina_confirm_body">Temizlenecek alanlar: %1$s. Silinen dosyalar geri alınamayabilir.</string>
+    <string name="furina_confirm_yes">Temizle</string>
+    <string name="furina_confirm_no">Vazgeç</string>
+
+    <string name="furina_settings_title">Gemini AI Core Settings</string>
+    <string name="furina_status_online">Furina Çevrimiçi</string>
+    <string name="furina_status_invalid">Anahtar geçersiz</string>
+    <string name="furina_status_unreachable">Doğrulanamadı, çevrimdışı mod</string>
+    <string name="furina_status_checking">Bağlantı denetleniyor…</string>
+    <string name="furina_status_no_key">Anahtar girilmedi</string>
+
+    <string name="furina_key_title">Gemini API anahtarı</string>
+    <string name="furina_key_label">API anahtarı</string>
+    <string name="furina_key_saved">Kayıtlı anahtar: %1$s</string>
+    <string name="furina_key_save">Kaydet ve test et</string>
+    <string name="furina_key_remove">Anahtarı sil</string>
+    <string name="furina_key_recheck">Yeniden dene</string>
+    <string name="furina_key_privacy">Anahtar cihazda Android Keystore ile şifrelenerek saklanır. Sohbet mesajların ve depolama özetin Google\'ın Gemini API\'sine gönderilir.</string>
+
+    <string name="furina_model_title">Model</string>
+    <string name="furina_model_error">Yalnızca harf, rakam, nokta, tire ve alt çizgi kullanılabilir</string>
+    <string name="furina_model_save">Modeli kaydet</string>
+
+    <string name="furina_schedule_title">Otomatik temizlik</string>
+    <string name="furina_schedule_active">Aktif program: %1$s</string>
+    <string name="furina_schedule_none">Kurulu program yok</string>
+    <string name="furina_schedule_hint">her gece 03:00  ·  her 6 saatte bir</string>
+    <string name="furina_schedule_apply">Programı kur</string>
+    <string name="furina_schedule_cancel">Programı iptal et</string>
+    <string name="furina_schedule_note">Çalışma anını Android belirler; temizlik birkaç dakika geç başlayabilir. Pil azken atlanır. Arka planda yalnızca uygulama önbellekleri temizlenir ve bu, SD Maid\'in yetki ayarlarına (root, Shizuku, erişilebilirlik) bağlıdır.</string>
+</resources>

@@ -1,0 +1,84 @@
+name: Build Maid Furina APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 75
+    steps:
+      - name: Checkout overlay (this repo)
+        uses: actions/checkout@v4
+        with:
+          path: furina
+
+      - name: Checkout SD Maid SE (upstream, GPL-3.0)
+        uses: actions/checkout@v4
+        with:
+          repository: d4rken-org/sdmaid-se
+          path: upstream
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Set up Gradle cache
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Apply Furina overlay
+        run: |
+          cp -r furina/overlay/. upstream/
+          pip install --quiet pillow
+          python3 furina/scripts/make_icon.py upstream
+          python3 furina/scripts/patch.py upstream
+
+      - name: Build foss debug APK
+        working-directory: upstream
+        env:
+          GRADLE_OPTS: -Dorg.gradle.jvmargs=-Xmx4g -Dfile.encoding=UTF-8
+        run: |
+          chmod +x gradlew
+          ./gradlew app:assembleFossDebug --stacktrace --console=plain 2>&1 | tee ../build.log
+          exit ${PIPESTATUS[0]}
+
+      - name: Collect APK
+        if: success()
+        run: |
+          apk=$(find upstream/app/build/outputs/apk -name '*.apk' | head -n 1)
+          test -n "$apk"
+          cp "$apk" MaidFurina-foss-debug.apk
+          ls -l MaidFurina-foss-debug.apk
+
+      - name: Keep build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-log
+          path: build.log
+          retention-days: 7
+
+      - name: Upload APK artifact
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: MaidFurina-foss-debug
+          path: MaidFurina-foss-debug.apk
+          retention-days: 30
+
+      - name: Publish release
+        if: success()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "build-${{ github.run_number }}" MaidFurina-foss-debug.apk \
+            --repo "${{ github.repository }}" \
+            --title "Maid Furina build ${{ github.run_number }}" \
+            --notes "Debug-signed foss APK built from d4rken-org/sdmaid-se main plus the Furina overlay."

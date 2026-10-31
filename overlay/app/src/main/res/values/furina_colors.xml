@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="furina_hydro">#00A2FF</color>
+    <color name="furina_hydro_deep">#1E90FF</color>
+    <color name="furina_noble_white">#F0F8FF</color>
+    <color name="furina_silver">#E6F2FF</color>
+    <color name="furina_obsidian">#0B0E14</color>
+    <color name="furina_night_blue">#121824</color>
+    <color name="furina_gold">#FFD700</color>
+    <!-- Adaptive icon background (white so the placeholder artwork blends in) -->
+    <color name="furina_icon_background">#FFFFFF</color>
+</resources>
