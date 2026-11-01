@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Original emblem: a hydro droplet under a golden crown. Not taken from any official artwork. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path android:pathData="M54,38C54,38 35,58 35,68a19,19 0,0 0,38 0C73,58 54,38 54,38z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="54"
+                android:startY="38"
+                android:endX="54"
+                android:endY="87"
+                android:type="linear">
+                <item android:color="#FF4FC3FF" android:offset="0" />
+                <item android:color="#FF1E90FF" android:offset="1" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <path
+        android:fillColor="#FFFFD700"
+        android:pathData="M41,36L44,22L50,29L54,19L58,29L64,22L67,36Z" />
+    <path
+        android:strokeColor="#B3FFFFFF"
+        android:strokeWidth="2.4"
+        android:strokeLineCap="round"
+        android:pathData="M45,66C45,61 47.5,57 50.5,54" />
+    <path
+        android:fillColor="#FFF0F8FF"
+        android:pathData="M76,40l1.2,3.3l3.3,1.2l-3.3,1.2l-1.2,3.3l-1.2,-3.3l-3.3,-1.2l3.3,-1.2z" />
+</vector>

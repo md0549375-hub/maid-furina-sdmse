@@ -2,14 +2,59 @@ name: Build Maid Furina APK
 
 on:
   workflow_dispatch:
+    inputs:
+      upstream_ref:
+        description: 'Upstream tag or branch to build (empty = latest SD Maid SE release)'
+        required: false
+        default: ''
   push:
     branches: [ main ]
+  schedule:
+    - cron: '17 */6 * * *'
 
 permissions:
   contents: write
 
+concurrency:
+  group: build-furina
+  cancel-in-progress: false
+
 jobs:
+  detect:
+    runs-on: ubuntu-24.04
+    outputs:
+      ref: ${{ steps.pick.outputs.ref }}
+      build: ${{ steps.pick.outputs.build }}
+    steps:
+      - id: pick
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EVENT: ${{ github.event_name }}
+          INPUT_REF: ${{ inputs.upstream_ref }}
+        run: |
+          set -euo pipefail
+          ref="${INPUT_REF:-}"
+          if [ -z "$ref" ]; then
+            ref=$(gh api "repos/d4rken-org/sdmaid-se/releases?per_page=30" --jq '[.[] | select(.draft == false)][0].tag_name')
+          fi
+          if [ -z "$ref" ] || [ "$ref" = "null" ]; then
+            echo "No upstream release found" >&2
+            exit 1
+          fi
+          build=true
+          if [ "$EVENT" = "schedule" ]; then
+            tags=$(gh release list --repo "$GITHUB_REPOSITORY" --limit 300 --json tagName --jq '.[].tagName')
+            if grep -q "^${ref}-furina" <<< "$tags"; then
+              build=false
+            fi
+          fi
+          echo "ref=$ref" >> "$GITHUB_OUTPUT"
+          echo "build=$build" >> "$GITHUB_OUTPUT"
+          echo "Upstream release: $ref (build=$build)"
+
   build:
+    needs: detect
+    if: needs.detect.outputs.build == 'true'
     runs-on: ubuntu-24.04
     timeout-minutes: 75
     steps:
@@ -22,6 +67,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: d4rken-org/sdmaid-se
+          ref: ${{ needs.detect.outputs.ref }}
           path: upstream
 
       - name: Set up JDK 21
@@ -33,11 +79,29 @@ jobs:
       - name: Set up Gradle cache
         uses: gradle/actions/setup-gradle@v4
 
+      - name: Restore the persistent signing key
+        env:
+          KEYSTORE_B64: ${{ secrets.FURINA_KEYSTORE_B64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.FURINA_KEYSTORE_PASSWORD }}
+        run: |
+          set -euo pipefail
+          if [ -z "$KEYSTORE_B64" ] || [ -z "$KEYSTORE_PASSWORD" ]; then
+            echo "::error::FURINA_KEYSTORE_B64 / FURINA_KEYSTORE_PASSWORD secrets are missing"
+            exit 1
+          fi
+          mkdir -p "$RUNNER_TEMP/sign"
+          printf '%s' "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/sign/furina.p12"
+          {
+            echo "STORE_PATH=$RUNNER_TEMP/sign/furina.p12"
+            echo "STORE_PASSWORD=$KEYSTORE_PASSWORD"
+            echo "KEY_ALIAS=furina"
+            echo "KEY_PASSWORD=$KEYSTORE_PASSWORD"
+          } >> "$GITHUB_ENV"
+
       - name: Apply Furina overlay
         run: |
           cp -r furina/overlay/. upstream/
-          pip install --quiet pillow
-          python3 furina/scripts/make_icon.py upstream
+          python3 furina/scripts/prepare_assets.py upstream
           python3 furina/scripts/patch.py upstream
 
       - name: Build foss debug APK
@@ -49,13 +113,24 @@ jobs:
           ./gradlew app:assembleFossDebug --stacktrace --console=plain 2>&1 | tee ../build.log
           exit ${PIPESTATUS[0]}
 
-      - name: Collect APK
-        if: success()
+      - name: Verify the APK (signature, package, SDK levels)
         run: |
+          set -euo pipefail
           apk=$(find upstream/app/build/outputs/apk -name '*.apk' | head -n 1)
           test -n "$apk"
-          cp "$apk" MaidFurina-foss-debug.apk
-          ls -l MaidFurina-foss-debug.apk
+          cp "$apk" MaidFurina.apk
+          bt=$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -n 1)
+          "$bt/apksigner" verify --print-certs -v MaidFurina.apk | tee verify.txt
+          apk_sha=$(grep -m1 'certificate SHA-256 digest' verify.txt | awk '{print $NF}')
+          ks_sha=$(keytool -list -v -keystore "$STORE_PATH" -storetype PKCS12 -storepass "$STORE_PASSWORD" -alias furina | grep -m1 'SHA256:' | awk '{print $2}' | tr -d ':' | tr 'A-F' 'a-f')
+          echo "apk signer sha256: $apk_sha"
+          echo "keystore sha256:   $ks_sha"
+          if [ "$apk_sha" != "$ks_sha" ]; then
+            echo "::error::APK is not signed with the persistent Furina key"
+            exit 1
+          fi
+          "$bt/aapt2" dump badging MaidFurina.apk | grep -E "^package:|^sdkVersion|^targetSdkVersion|^native-code|^application-label:" || true
+          ls -l MaidFurina.apk
 
       - name: Keep build log
         if: always()
@@ -66,19 +141,72 @@ jobs:
           retention-days: 7
 
       - name: Upload APK artifact
-        if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: MaidFurina-foss-debug
-          path: MaidFurina-foss-debug.apk
+          name: MaidFurina
+          path: MaidFurina.apk
           retention-days: 30
 
+  smoke:
+    needs: build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: MaidFurina
+          path: apk
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Install and launch on an emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          arch: x86_64
+          target: google_apis
+          disable-animations: true
+          script: bash scripts/smoke.sh apk/MaidFurina.apk
+
+      - name: Keep smoke test evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: smoke-evidence
+          path: |
+            furina-chat.png
+            logcat.txt
+          if-no-files-found: ignore
+          retention-days: 14
+
+  release:
+    needs: [detect, build, smoke]
+    if: ${{ always() && needs.build.result == 'success' }}
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: MaidFurina
+          path: apk
+
       - name: Publish release
-        if: success()
         env:
           GH_TOKEN: ${{ github.token }}
+          REF: ${{ needs.detect.outputs.ref }}
+          SMOKE: ${{ needs.smoke.result }}
         run: |
-          gh release create "build-${{ github.run_number }}" MaidFurina-foss-debug.apk \
-            --repo "${{ github.repository }}" \
-            --title "Maid Furina build ${{ github.run_number }}" \
-            --notes "Debug-signed foss APK built from d4rken-org/sdmaid-se main plus the Furina overlay."
+          set -euo pipefail
+          tag="${REF}-furina.${{ github.run_number }}"
+          cp apk/MaidFurina.apk "MaidFurina-${REF}.apk"
+          gh release create "$tag" "MaidFurina-${REF}.apk" \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "Maid Furina on SD Maid SE ${REF}" \
+            --notes "Built from d4rken-org/sdmaid-se tag ${REF} plus the Furina overlay. Signed with the persistent Furina key, so newer builds install over older ones. Emulator install/launch test: ${SMOKE}." \
+            --latest

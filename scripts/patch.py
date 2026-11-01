@@ -37,3 +37,30 @@ text = text.replace(label, 'android:label="@string/furina_app_name"', 1)
 
 manifest.write_text(text, encoding="utf-8")
 print("manifest patched")
+
+# ---- Gradle: side-by-side install, consistent package name, stable signing for the debug build type ----
+gradle = root / "app/build.gradle.kts"
+g = gradle.read_text(encoding="utf-8")
+if "applicationIdSuffix" in g:
+    sys.exit("gradle already patched")
+
+ns = "        namespace = projectConfig.packageName\n"
+if g.count(ns) != 1:
+    sys.exit("namespace line not found exactly once; upstream layout changed")
+g = g.replace(ns, ns + '        applicationIdSuffix = ".furina"\n', 1)
+
+pk = 'buildConfigField("String", "PACKAGENAME", "\\"${projectConfig.packageName}\\"")'
+if g.count(pk) != 1:
+    sys.exit("PACKAGENAME field not found exactly once; upstream layout changed")
+g = g.replace(pk, 'buildConfigField("String", "PACKAGENAME", "\\"${projectConfig.packageName}.furina\\"")', 1)
+
+bt = "    buildTypes {\n        all {"
+if g.count(bt) != 1:
+    sys.exit("buildTypes block not found exactly once; upstream layout changed")
+g = g.replace(
+    bt,
+    '    buildTypes {\n        getByName("debug") {\n            signingConfig = signingConfigs.getByName("releaseFoss")\n        }\n        all {',
+    1,
+)
+gradle.write_text(g, encoding="utf-8")
+print("gradle patched")

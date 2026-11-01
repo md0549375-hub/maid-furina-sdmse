@@ -1,6 +1,7 @@
 package eu.darken.sdmse.furina.feature.settings
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,6 +20,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
@@ -36,6 +38,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.KeyboardType
@@ -66,17 +69,25 @@ fun GeminiSettingsScreen(viewModel: GeminiSettingsViewModel, modifier: Modifier 
             .padding(horizontal = 20.dp, vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(18.dp),
     ) {
-        Text(
-            text = stringResource(R.string.furina_settings_title),
-            fontFamily = FontFamily.Serif,
-            style = MaterialTheme.typography.headlineSmall,
-            color = MaterialTheme.colorScheme.onBackground,
-        )
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Image(
+                painter = painterResource(R.drawable.ic_furina_emblem),
+                contentDescription = null,
+                modifier = Modifier.size(56.dp),
+            )
+            Spacer(Modifier.width(12.dp))
+            Text(
+                text = stringResource(R.string.furina_settings_title),
+                fontFamily = FontFamily.Serif,
+                style = MaterialTheme.typography.headlineSmall,
+                color = MaterialTheme.colorScheme.onBackground,
+            )
+        }
 
         StatusBadge(status = state.status, detail = state.statusDetail)
 
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            SectionTitle(stringResource(R.string.furina_key_title))
+            SectionTitle(R.drawable.ic_sec_lock, stringResource(R.string.furina_key_title))
             state.maskedKey?.let {
                 Text(
                     text = stringResource(R.string.furina_key_saved, it),
@@ -116,7 +127,7 @@ fun GeminiSettingsScreen(viewModel: GeminiSettingsViewModel, modifier: Modifier 
         HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.4f))
 
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            SectionTitle(stringResource(R.string.furina_model_title))
+            SectionTitle(R.drawable.ic_sec_spark, stringResource(R.string.furina_model_title))
             OutlinedTextField(
                 value = modelInput,
                 onValueChange = { modelInput = it },
@@ -135,7 +146,7 @@ fun GeminiSettingsScreen(viewModel: GeminiSettingsViewModel, modifier: Modifier 
         HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.4f))
 
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            SectionTitle(stringResource(R.string.furina_schedule_title))
+            SectionTitle(R.drawable.ic_sec_clock, stringResource(R.string.furina_schedule_title))
             Text(
                 text = state.schedule?.let { stringResource(R.string.furina_schedule_active, it.describe()) }
                     ?: stringResource(R.string.furina_schedule_none),
@@ -177,8 +188,17 @@ fun GeminiSettingsScreen(viewModel: GeminiSettingsViewModel, modifier: Modifier 
 }
 
 @Composable
-private fun SectionTitle(text: String) {
-    Text(text = text, style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onBackground)
+private fun SectionTitle(icon: Int, text: String) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Icon(
+            painter = painterResource(icon),
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.tertiary,
+            modifier = Modifier.size(20.dp),
+        )
+        Spacer(Modifier.width(8.dp))
+        Text(text = text, style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onBackground)
+    }
 }
 
 @Composable

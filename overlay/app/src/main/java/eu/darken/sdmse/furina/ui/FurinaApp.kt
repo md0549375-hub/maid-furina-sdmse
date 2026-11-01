@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -17,6 +18,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import eu.darken.sdmse.R
 import eu.darken.sdmse.furina.feature.chat.ChatScreen
@@ -40,13 +42,13 @@ fun FurinaApp(chatViewModel: ChatViewModel, settingsViewModel: GeminiSettingsVie
                     NavigationBarItem(
                         selected = tab == TAB_CHAT,
                         onClick = { tab = TAB_CHAT },
-                        icon = { Text("💬") },
+                        icon = { Icon(painterResource(R.drawable.ic_nav_chat), contentDescription = null) },
                         label = { Text(stringResource(R.string.furina_tab_chat)) },
                     )
                     NavigationBarItem(
                         selected = tab == TAB_SETTINGS,
                         onClick = { tab = TAB_SETTINGS },
-                        icon = { Text("⚙️") },
+                        icon = { Icon(painterResource(R.drawable.ic_nav_tune), contentDescription = null) },
                         label = { Text(stringResource(R.string.furina_tab_settings)) },
                     )
                 }

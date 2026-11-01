@@ -2,6 +2,7 @@ package eu.darken.sdmse.furina.feature.chat
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -163,6 +164,7 @@ internal fun FurinaAvatar(size: Dp, modifier: Modifier = Modifier, description: 
         modifier = modifier
             .size(size)
             .clip(CircleShape)
+            .background(MaterialTheme.colorScheme.background)
             .border(1.5.dp, MaterialTheme.colorScheme.tertiary, CircleShape),
     )
 }

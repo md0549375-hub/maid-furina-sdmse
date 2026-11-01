@@ -7,6 +7,6 @@
     <color name="furina_obsidian">#0B0E14</color>
     <color name="furina_night_blue">#121824</color>
     <color name="furina_gold">#FFD700</color>
-    <!-- Adaptive icon background (white so the placeholder artwork blends in) -->
-    <color name="furina_icon_background">#FFFFFF</color>
+    <!-- Adaptive icon / splash background: obsidian, so the droplet and crown stand out -->
+    <color name="furina_icon_background">#0B0E14</color>
 </resources>
