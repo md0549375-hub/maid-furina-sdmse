@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="furina_app_name">Maid Furina</string>
+    <string name="furina_shortcut_short">Furina Sohbet</string>
+    <string name="furina_shortcut_long">Furina ile sohbet et</string>
 
     <string-array name="furina_greeting">
         <item>Sahneye hoş geldin, sevgili seyircim! Ben Furina, senin özel temizlik maid\'in. Depolamana bakabilir, çöpleri süpürebilir, program kurabilirim. Ne emredersin?</item>

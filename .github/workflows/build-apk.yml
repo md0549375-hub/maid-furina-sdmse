@@ -130,6 +130,12 @@ jobs:
             exit 1
           fi
           "$bt/aapt2" dump badging MaidFurina.apk | grep -E "^package:|^sdkVersion|^targetSdkVersion|^native-code|^application-label:" || true
+          n=$("$bt/aapt2" dump xmltree --file AndroidManifest.xml MaidFurina.apk | grep -c '"android.intent.category.LAUNCHER"' || true)
+          echo "launcher entries in manifest: $n"
+          if [ "$n" != "1" ]; then
+            echo "::error::expected exactly one launcher entry, found $n"
+            exit 1
+          fi
           ls -l MaidFurina.apk
 
       - name: Keep build log

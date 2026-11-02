@@ -20,15 +20,23 @@ activity = """        <activity
             android:label="@string/furina_app_name"
             android:icon="@mipmap/ic_launcher"
             android:theme="@style/Theme.Furina"
-            android:windowSoftInputMode="adjustResize">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:windowSoftInputMode="adjustResize" />
 
 """
 text = text.replace(marker, activity + marker, 1)
+
+# Furina Chat is reached through a launcher shortcut (long-press the app icon), not a second launcher icon.
+main_name = 'android:name="eu.darken.sdmse.main.ui.MainActivity"'
+if text.count(main_name) != 1:
+    sys.exit("MainActivity not found exactly once; upstream layout changed")
+if "android.app.shortcuts" in text:
+    sys.exit("upstream already declares static shortcuts; merge manually")
+close = text.index("</activity>", text.index(main_name))
+meta = """    <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/furina_shortcuts" />
+        """
+text = text[:close] + meta + text[close:]
 
 label = 'android:label="@string/app_name"'
 if text.count(label) != 1:

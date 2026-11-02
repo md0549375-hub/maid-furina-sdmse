@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="furina_chat"
+        android:enabled="true"
+        android:icon="@mipmap/ic_launcher"
+        android:shortcutShortLabel="@string/furina_shortcut_short"
+        android:shortcutLongLabel="@string/furina_shortcut_long">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="eu.darken.sdmse.furina"
+            android:targetClass="eu.darken.sdmse.furina.ui.FurinaHostActivity" />
+    </shortcut>
+</shortcuts>
